@@ -1,3 +1,4 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q, Count, Case, When, IntegerField
 from rest_framework import viewsets, status, filters as drf_filters
 from rest_framework.decorators import action
@@ -50,10 +51,7 @@ class ContactViewSet(viewsets.ModelViewSet):
     """
     permission_classes = [IsAuthenticated]
     filterset_class = ContactFilter
-    filter_backends = [
-        __import__('django_filters.rest_framework', fromlist=['DjangoFilterBackend']).DjangoFilterBackend,
-        drf_filters.OrderingFilter,
-    ]
+    filter_backends = [DjangoFilterBackend, drf_filters.OrderingFilter]
     ordering_fields = ['first_name', 'last_name', 'created_at', 'updated_at']
     ordering = ['-created_at']
 
@@ -166,7 +164,7 @@ class ContactViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'], url_path='stats')
     def stats(self, request):
-        
+
         aggregates = Contact.objects.filter(user=request.user).aggregate(
             total_contacts=Count('id'),
             favorite_contacts=Count(Case(

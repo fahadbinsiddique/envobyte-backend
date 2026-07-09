@@ -1,11 +1,14 @@
+from django_filters import widgets
 import django_filters
 from .models import Contact
 
 
 class ContactFilter(django_filters.FilterSet):
-    
-    favorite = django_filters.BooleanFilter(field_name='is_favorite')
-    search = django_filters.CharFilter(method='filter_search')
+
+    favorite = django_filters.BooleanFilter(
+        field_name="is_favorite", widget=widgets.BooleanWidget
+    )
+    search = django_filters.CharFilter(method="filter_search")
 
     class Meta:
         model = Contact
